@@ -4,7 +4,7 @@ import { UserRole } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, displayName, role } = await request.json();
+    const { email, password, displayName, role, gender, phoneNumber } = await request.json();
     
     // Validation
     if (!email || !password || !displayName) {
@@ -14,12 +14,28 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Additional validation for patients
+    if (role === "patient" && (!gender || !phoneNumber)) {
+      return NextResponse.json(
+        { error: "Gender and phone number are required for patients" },
+        { status: 400 }
+      );
+    }
+    
+    // Create additional data object for patient information
+    const additionalData: Record<string, any> = {};
+    if (role === "patient") {
+      additionalData.gender = gender;
+      additionalData.phoneNumber = phoneNumber;
+    }
+    
     // Register the user
     const userData = await registerUser(
       email, 
       password, 
       displayName, 
-      (role as UserRole) || "patient"
+      (role as UserRole) || "patient",
+      additionalData
     );
     
     // Return success

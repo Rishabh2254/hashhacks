@@ -12,11 +12,14 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 // User roles
 export type UserRole = 'patient' | 'doctor' | 'admin';
 
+// User data with optional patient specific fields
 export interface UserData {
   uid: string;
-  email: string;
+  email: string | null;
   displayName: string;
   role: UserRole;
+  gender?: string;  // Optional field for patient
+  phoneNumber?: string;  // Optional field for patient
 }
 
 // Register new user
@@ -24,7 +27,8 @@ export const registerUser = async (
   email: string, 
   password: string, 
   displayName: string,
-  role: UserRole = 'patient'
+  role: UserRole = 'patient',
+  additionalData: Record<string, any> = {}
 ): Promise<UserData> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -39,6 +43,7 @@ export const registerUser = async (
       email: user.email || email,
       displayName,
       role,
+      ...additionalData  // Include any additional data passed
     };
     
     await setDoc(doc(db, "users", user.uid), userData);
