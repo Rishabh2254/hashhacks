@@ -1,0 +1,95 @@
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  User,
+  updateProfile
+} from "firebase/auth";
+import { auth, db } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+
+// User roles
+export type UserRole = 'patient' | 'doctor' | 'admin';
+
+export interface UserData {
+  uid: string;
+  email: string;
+  displayName: string;
+  role: UserRole;
+}
+
+// Register new user
+export const registerUser = async (
+  email: string, 
+  password: string, 
+  displayName: string,
+  role: UserRole = 'patient'
+): Promise<UserData> => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Update profile with display name
+    await updateProfile(user, { displayName });
+    
+    // Store additional user data in Firestore
+    const userData: UserData = {
+      uid: user.uid,
+      email: user.email || email,
+      displayName,
+      role,
+    };
+    
+    await setDoc(doc(db, "users", user.uid), userData);
+    
+    return userData;
+  } catch (error) {
+    console.error("Error registering user:", error);
+    throw error;
+  }
+};
+
+// Login user
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error;
+  }
+};
+
+// Sign out
+export const signOut = async () => {
+  try {
+    await firebaseSignOut(auth);
+  } catch (error) {
+    console.error("Error signing out:", error);
+    throw error;
+  }
+};
+
+// Get current user data including role
+export const getCurrentUserData = async (): Promise<UserData | null> => {
+  const user = auth.currentUser;
+  
+  if (!user) {
+    return null;
+  }
+  
+  try {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return docSnap.data() as UserData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting user data:", error);
+    throw error;
+  }
+};
