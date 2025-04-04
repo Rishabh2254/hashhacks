@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { UserData } from "@/lib/auth";
+import Chatbot from "@/app/components/Chatbot";
 
 interface PatientComponentProps {
   userData: UserData;
@@ -156,6 +157,9 @@ export default function PatientComponent({ userData }: PatientComponentProps) {
           </div>
         </div>
       )}
+      
+      {/* Add the Chatbot component */}
+      <Chatbot />
     </div>
   );
 }

@@ -55,6 +55,8 @@ export default function PatientDashboard() {
       <p className="mb-8">Welcome, {userData.displayName}!</p>
       
       <PatientComponent userData={userData} />
+      
+      {/* Note: The Chatbot is now included in the PatientComponent */}
     </div>
   );
 }
