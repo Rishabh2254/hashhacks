@@ -106,9 +106,11 @@ export default function Register() {
                 placeholder="Password"
               />
             </div>
+            
+            {/* Role selection dropdown */}
             <div>
-              <label htmlFor="role" className="sr-only">
-                Role
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Register as
               </label>
               <select
                 id="role"
@@ -116,10 +118,11 @@ export default function Register() {
                 required
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
-                className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+                className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
               >
                 <option value="patient">Patient</option>
                 <option value="doctor">Doctor</option>
+                <option value="admin">Hospital Admin</option>
               </select>
             </div>
           </div>

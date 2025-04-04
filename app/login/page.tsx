@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { loginUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { UserRole } from "@/lib/auth";
 import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("patient");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -18,7 +20,7 @@ export default function Login() {
     setError("");
     
     try {
-      await loginUser(email, password);
+      await loginUser(email, password, role);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to log in");
@@ -88,6 +90,24 @@ export default function Login() {
                 className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
                 placeholder="Password"
               />
+            </div>
+            
+            {/* Role selection dropdown */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Login as
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              >
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Hospital Admin</option>
+              </select>
             </div>
           </div>
 

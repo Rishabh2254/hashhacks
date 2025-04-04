@@ -51,9 +51,21 @@ export const registerUser = async (
 };
 
 // Login user
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string, role: UserRole = "patient") => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    // Verify user role
+    const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data() as UserData;
+      if (userData.role !== role) {
+        // If roles don't match, sign out and throw an error
+        await firebaseSignOut(auth);
+        throw new Error(`You don't have ${role} access. Please sign in with the correct account type.`);
+      }
+    }
+    
     return userCredential.user;
   } catch (error) {
     console.error("Error logging in:", error);
