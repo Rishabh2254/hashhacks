@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## AI-Powered National Health Portal for Unified Medical Access and Personalized Care in India
 
-## Getting Started
+In India, healthcare data remains deeply fragmented, making it difficult for patients to retrieve medical records, book appointments, or consult the right specialists — especially when moving between hospitals, diagnostic labs, or cities. The situation is even more challenging in rural or underserved regions, where digital healthcare access is minimal. On top of that, interpreting medical test reports is often confusing for the average person due to complex medical jargon and a lack of accessible explanations.
 
-First, run the development server:
+To address these challenges, we have developed a comprehensive web application — a unified digital health portal that brings hospitals, doctors, diagnostic labs, and patients together on a single platform.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# The platform offers the following key features:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Seamless appointment booking with registered hospitals and doctors
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Instant access to medical test results, securely retrieved through hospital-issued credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. AI-powered report analysis via a personalized chatbot that interprets reports in simple language and suggests next steps or relevant specialists
 
-## Learn More
+4. A centralized user dashboard for patients, doctors, and hospitals to manage their interactions efficiently
 
-To learn more about Next.js, take a look at the following resources:
+5. The landing page features distinct login and registration options for hospitals, doctors, and patients, ensuring a tailored experience for every stakeholder.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+6. This platform is built with the vision of "AI for Social Good", aiming to create a secure, intelligent, and inclusive health ecosystem that empowers every citizen — regardless of their location or background — to understand and take control of their health.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Installation/Setup
+To set up the project, follow these steps:
 
-## Deploy on Vercel
+1. Clone the repository using `git clone https://github.com/SakshiThapliyal19/hashhacks.git
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+cd hashhacks.git
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install Dependencies
+
+      npm install
+
+3. Set Up Environment Variables
+
+
+NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyAcn2Kw1BUFRmd0E98zHYGnSe-BMHR_wEs",
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="hashhacks-16cd4.firebaseapp.com",
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="hashhacks-16cd4",
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="hashhacks-16cd4.firebasestorage.app",
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="733989043363",
+NEXT_PUBLIC_FIREBASE_APP_ID="1:733989043363:web:59a8bd63a3293cf43d5316"
+
+// API setup
+const API_KEY = "AIzaSyCkQTUtIgXPL77KWdxof1wo8KSINVOTYoQ";
+const API_URL = https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY};
+
+
+4. Run the application
+
+      npm run dev
+
+
+the app will be available at http://localhost:3000
+
+
+
+## Tech Stack
+      Frontend: Next.js
+
+      Styling: Tailwind CSS
+
+      Authentication: Firebase Authentication
+
+      Chatbot / AI: Gemini API (Google AI Studio)
