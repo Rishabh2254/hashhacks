@@ -10,6 +10,10 @@ import {
   getAllSpecialties,
   AppointmentData
 } from "@/lib/appointment";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Message {
   id: string;
@@ -84,7 +88,9 @@ export default function Chatbot() {
   const [doctors, setDoctors] = useState<{id: string, name: string}[]>([]);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [justBooked, setJustBooked] = useState(false); // Track if an appointment was just booked
   
+  // State for option selections
   const [specialtyOptions, setSpecialtyOptions] = useState<Option[]>([]);
   const [doctorOptions, setDoctorOptions] = useState<Option[]>([]);
   const [timeOptions, setTimeOptions] = useState<Option[]>([]);
@@ -114,6 +120,7 @@ export default function Chatbot() {
   // Load specialties when starting the booking process
   const startBookingProcess = async () => {
     setIsLoading(true);
+    setJustBooked(false); // Reset the just booked state
     
     try {
       const specialtiesList = await getAllSpecialties();
@@ -184,35 +191,80 @@ export default function Chatbot() {
     switch(bookingState.step) {
       case 'specialty':
         const specialty = specialties.find(s => 
-          input.toLowerCase().includes(s.toLowerCase())
+          s.toLowerCase() === input.toLowerCase()
         );
         
         if (specialty) {
           setIsLoading(true);
           
           try {
-            const doctorsList = await getDoctorsBySpecialty(specialty);
-            setDoctors(doctorsList);
-            setBookingState(prev => ({ ...prev, specialty, step: 'doctor' }));
+            // First try to get doctors from Firebase
+            const doctorsRef = collection(db, "users");
+            const q = query(
+              doctorsRef,
+              where("role", "==", "doctor"),
+              where("department", "==", specialty)
+            );
             
-            // Create doctor options
-            const options = doctorsList.map(d => ({ value: d.name, label: d.name }));
-            setDoctorOptions(options);
+            const querySnapshot = await getDocs(q);
+            const registeredDoctors = querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              name: doc.data().fullName || doc.data().displayName || `Dr. ${doc.data().lastName || ''}`,
+            }));
             
-            // Send confirmation and next step
-            const confirmMessage: Message = {
-              id: `bot-confirm-${Date.now()}`,
-              content: `Great, you've selected ${specialty}. Now please choose a doctor:`,
-              isUser: false,
-              timestamp: new Date()
-            };
+            // If no doctors found in Firebase, use the mock data as fallback
+            if (registeredDoctors.length === 0) {
+              const mockDoctors = await getDoctorsBySpecialty(specialty);
+              setDoctors(mockDoctors);
+              
+              // Create doctor options
+              const options = mockDoctors.map(d => ({ value: d.name, label: d.name }));
+              setDoctorOptions(options);
+              
+              // Send confirmation and next step
+              const confirmMessage: Message = {
+                id: `bot-confirm-${Date.now()}`,
+                content: `Great, you've selected ${specialty}. Now please choose a doctor:`,
+                isUser: false,
+                timestamp: new Date()
+              };
+              
+              setMessages(prev => [...prev, confirmMessage]);
+              
+              setShowOptions({
+                type: 'doctor',
+                options: options
+              });
+            } else {
+              setDoctors(registeredDoctors);
+              
+              // Create doctor options
+              const options = registeredDoctors.map(d => ({ value: d.name, label: d.name }));
+              setDoctorOptions(options);
+              
+              // Send confirmation and next step
+              const confirmMessage: Message = {
+                id: `bot-confirm-${Date.now()}`,
+                content: `Great, you've selected ${specialty}. Now please choose a doctor:`,
+                isUser: false,
+                timestamp: new Date()
+              };
+              
+              setMessages(prev => [...prev, confirmMessage]);
+              
+              setShowOptions({
+                type: 'doctor',
+                options: options
+              });
+            }
             
-            setMessages(prev => [...prev, confirmMessage]);
+            // Update booking state with selected specialty
+            setBookingState(prev => ({
+              ...prev,
+              specialty: specialty,
+              step: 'doctor'
+            }));
             
-            setShowOptions({
-              type: 'doctor',
-              options: options
-            });
           } catch (error) {
             const errorMessage: Message = {
               id: `bot-error-${Date.now()}`,
@@ -244,32 +296,40 @@ export default function Chatbot() {
         break;
         
       case 'doctor':
-        const doctor = doctors.find(d => 
-          input.toLowerCase().includes(d.name.toLowerCase())
-        );
+        // Fix: Improved doctor selection logic
+        let selectedDoctor = null;
+        for (const doc of doctors) {
+          if (doc.name.toLowerCase() === input.toLowerCase()) {
+            selectedDoctor = doc;
+            break;
+          }
+        }
         
-        if (doctor) {
+        if (selectedDoctor) {
           setBookingState(prev => ({ 
             ...prev, 
-            doctor: doctor.name,
-            doctorId: doctor.id,
+            doctor: selectedDoctor!.name,
+            doctorId: selectedDoctor!.id,
             step: 'date'
           }));
           
           // Send confirmation and next step
           const confirmMessage: Message = {
             id: `bot-confirm-${Date.now()}`,
-            content: `You've selected ${doctor.name}. Please enter a preferred date (e.g., YYYY-MM-DD):`,
+            content: `You've selected ${selectedDoctor.name}. Please enter a preferred date (format: YYYY-MM-DD):`,
             isUser: false,
             timestamp: new Date()
           };
           
           setMessages(prev => [...prev, confirmMessage]);
+          
+          // Clear the options since we need text input for date
+          setShowOptions({ type: null, options: [] });
         } else {
           // Send error message
           const errorMessage: Message = {
             id: `bot-error-${Date.now()}`,
-            content: `I don't recognize that doctor. Please select from the options.`,
+            content: `I don't recognize that doctor. Please select from the list.`,
             isUser: false,
             timestamp: new Date()
           };
@@ -341,17 +401,22 @@ export default function Chatbot() {
         break;
         
       case 'time':
-        const timeSlot = timeSlots.find(t => 
-          input.toLowerCase().includes(t.toLowerCase())
-        );
+        // Fix: Improved time selection logic
+        let selectedTime = null;
+        for (const time of timeSlots) {
+          if (time.toLowerCase() === input.toLowerCase()) {
+            selectedTime = time;
+            break;
+          }
+        }
         
-        if (timeSlot) {
-          setBookingState(prev => ({ ...prev, time: timeSlot, step: 'confirmation' }));
+        if (selectedTime) {
+          setBookingState(prev => ({ ...prev, time: selectedTime, step: 'confirmation' }));
           
           // Send confirmation message
           const summaryMessage: Message = {
             id: `bot-summary-${Date.now()}`,
-            content: `Here's your appointment summary:\n\nSpecialty: ${bookingState.specialty}\nDoctor: ${bookingState.doctor}\nDate: ${bookingState.date}\nTime: ${timeSlot}\n\nWould you like to confirm this appointment?`,
+            content: `Here's your appointment summary:\n\nSpecialty: ${bookingState.specialty}\nDoctor: ${bookingState.doctor}\nDate: ${bookingState.date}\nTime: ${selectedTime}\n\nWould you like to confirm this appointment? (yes/no)`,
             isUser: false,
             timestamp: new Date()
           };
@@ -388,60 +453,39 @@ export default function Chatbot() {
           setIsLoading(true);
           
           try {
-            // Call API to book appointment
-            const appointmentData: AppointmentData = {
-              doctorName: bookingState.doctor || "",
-              specialty: bookingState.specialty || "",
-              date: bookingState.date || "",
-              time: bookingState.time || ""
+            // Get current authenticated user
+            const auth = getAuth();
+            const user = auth.currentUser;
+            
+            if (!user) {
+              setIsLoading(false);
+              return addBotMessage("You need to be signed in to book an appointment. Please log in and try again.");
+            }
+            
+            const appointmentData = {
+              specialty: bookingState.specialty!,
+              doctorName: bookingState.doctor!,
+              doctorId: bookingState.doctorId!,
+              date: bookingState.date!,
+              time: bookingState.time!,
+              source: 'chatbot' as const,
             };
             
             const result = await bookAppointment(appointmentData);
             
             if (result.success) {
-              // Complete booking process
-              setBookingState(prev => ({ ...prev, step: 'complete' }));
-              
-              // Send success message
-              const successMessage: Message = {
-                id: `bot-success-${Date.now()}`,
-                content: `Great! Your appointment with ${bookingState.doctor} has been booked for ${bookingState.date} at ${bookingState.time}. Appointment ID: ${result.appointmentId}\n\nYou will receive a confirmation email shortly. Is there anything else I can help you with?`,
-                isUser: false,
-                timestamp: new Date()
-              };
-              
-              setMessages(prev => [...prev, successMessage]);
-              
-              // Reset booking state after a delay
-              setTimeout(() => {
-                setBookingState({
-                  isBooking: false,
-                  step: 'specialty',
-                  specialty: null,
-                  doctor: null,
-                  doctorId: null,
-                  date: null,
-                  time: null
-                });
-              }, 2000);
+              addBotMessage(`Perfect! Your appointment has been booked. Appointment ID: ${result.appointmentId}. You can find this appointment in your dashboard.`);
+              setJustBooked(true); // Set the just booked state to true
             } else {
-              throw new Error(result.message);
+              addBotMessage(`Sorry, there was an issue booking your appointment: ${result.message}`);
             }
           } catch (error: any) {
-            // Send error message
-            const errorMessage: Message = {
-              id: `bot-error-${Date.now()}`,
-              content: `I'm sorry, there was a problem booking your appointment: ${error.message || "Unknown error"}. Please try again later.`,
-              isUser: false,
-              timestamp: new Date()
-            };
-            
-            setMessages(prev => [...prev, errorMessage]);
+            addBotMessage(`Sorry, there was an error booking your appointment: ${error.message}`);
           } finally {
             setIsLoading(false);
           }
-        } else if (input.toLowerCase() === 'no' || input.toLowerCase() === 'n') {
-          // Cancel booking
+          
+          // Reset booking state
           setBookingState({
             isBooking: false,
             step: 'specialty',
@@ -449,29 +493,32 @@ export default function Chatbot() {
             doctor: null,
             doctorId: null,
             date: null,
-            time: null
+            time: null,
           });
           
-          // Send cancellation message
-          const cancelMessage: Message = {
-            id: `bot-cancel-${Date.now()}`,
-            content: "I've canceled this appointment booking. Is there anything else I can help you with?",
-            isUser: false,
-            timestamp: new Date()
-          };
+          // Clear options
+          setShowOptions({ type: null, options: [] });
           
-          setMessages(prev => [...prev, cancelMessage]);
+        } else if (input.toLowerCase() === 'no' || input.toLowerCase() === 'n') {
+          addBotMessage("No problem. Let's start over. What would you like to do?");
+          
+          // Reset booking state
+          setBookingState({
+            isBooking: false,
+            step: 'specialty',
+            specialty: null,
+            doctor: null,
+            doctorId: null,
+            date: null,
+            time: null,
+          });
+          
+          // Clear options
+          setShowOptions({ type: null, options: [] });
         } else {
-          // Send error message
-          const errorMessage: Message = {
-            id: `bot-error-${Date.now()}`,
-            content: "Please answer with 'yes' or 'no' to confirm the appointment.",
-            isUser: false,
-            timestamp: new Date()
-          };
+          addBotMessage("I didn't understand that. Please answer with 'yes' or 'no'.");
           
-          setMessages(prev => [...prev, errorMessage]);
-          // Show confirmation options again
+          // Show options again
           setShowOptions({
             type: 'confirm',
             options: [
@@ -485,6 +532,22 @@ export default function Chatbot() {
       default:
         break;
     }
+  };
+
+  // Helper function to add a bot message
+  const addBotMessage = (content: string) => {
+    const botMessage: Message = {
+      id: `bot-${Date.now()}`,
+      content: content,
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, botMessage]);
+  };
+
+  const handleSend = () => {
+    handleSendMessage();
   };
 
   const handleSendMessage = async (e?: React.FormEvent) => {
@@ -603,42 +666,43 @@ export default function Chatbot() {
                   className={`max-w-[80%] px-4 py-2 rounded-lg ${
                     message.isUser
                       ? "bg-primary text-primary-foreground"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                  <span className="text-xs opacity-70 block mt-1">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                  <pre className="whitespace-pre-wrap font-sans text-sm">{message.content}</pre>
                 </div>
               </div>
             ))}
-            
-            {/* Show option buttons */}
-            {showOptions.type && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%]">
-                  <OptionsMessage 
-                    options={showOptions.options} 
-                    onSelect={handleOptionSelect} 
-                  />
-                </div>
-              </div>
-            )}
-            
-            <div ref={messageEndRef} />
+            <div ref={messageEndRef}></div>
           </div>
+          
+          {/* Options display */}
+          {showOptions.type && (
+            <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex flex-wrap gap-2">
+                {showOptions.options.map(option => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleOptionSelect(option.value)}
+                    className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           
           {/* Loading indicator */}
           {isLoading && (
-            <div className="px-4 py-2 text-center">
+            <div className="px-4 py-2 flex flex-col items-center">
               <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Processing...</p>
             </div>
           )}
           
           {/* Quick action buttons - displayed when not in booking flow */}
-          {!bookingState.isBooking && !isLoading && (
+          {(!bookingState.isBooking || justBooked) && !isLoading && (
             <div className="px-4 pt-2 flex flex-wrap gap-2">
               <button 
                 onClick={() => {
@@ -679,17 +743,13 @@ export default function Chatbot() {
         </div>
       )}
       
-      {/* Chat toggle button */}
+      {/* Chat button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
         className="bg-primary text-white rounded-full p-3 shadow-lg hover:bg-primary/90 transition-transform duration-300 ease-in-out transform hover:scale-110"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
-        {isOpen ? (
-          <X size={24} />
-        ) : (
-          <MessageSquare size={24} />
-        )}
+        <MessageSquare size={24} />
       </button>
     </div>
   );
