@@ -11,9 +11,7 @@ export default function MainPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-block bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full text-blue-800 dark:text-blue-200 text-sm font-medium mb-4">
-                Trusted by 10,000+ healthcare professionals
-              </div>
+              
               <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
                 Healthcare Made <span className="text-primary">Simple</span> and <span className="text-primary">Accessible</span>
               </h1>
@@ -38,24 +36,7 @@ export default function MainPage() {
                 </Link>
               </div>
               
-              <div className="mt-10 flex items-center">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-800 overflow-hidden bg-gray-200">
-                      <Image 
-                        src={`https://randomuser.me/api/portraits/men/${i+10}.jpg`} 
-                        alt="User" 
-                        width={32} 
-                        height={32} 
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="ml-3 text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium text-gray-900 dark:text-white">500+</span> healthcare providers joined this month
-                </div>
-              </div>
+
             </div>
             
             <div className="relative h-[400px] md:h-[500px]">
@@ -100,17 +81,7 @@ export default function MainPage() {
             </div>
           </div>
           
-          {/* Trusted by brands */}
-          <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8">
-            <p className="text-center text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">
-              TRUSTED BY LEADING HEALTHCARE INSTITUTIONS
-            </p>
-            <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
-              {["Mayo Clinic", "Cleveland Clinic", "Johns Hopkins", "Mass General", "UCSF Medical"].map((brand) => (
-                <span key={brand} className="text-gray-400 dark:text-gray-500 font-semibold text-lg">{brand}</span>
-              ))}
-            </div>
-          </div>
+          
         </div>
       </section>
 
@@ -259,7 +230,7 @@ export default function MainPage() {
                 Data Security & Privacy
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-5">
-                Bank-level encryption and strict privacy controls ensure your medical data remains secure and confidential.
+                Strict privacy controls ensure your medical data remains secure and confidential.
               </p>
               <Link 
                 href="#" 
@@ -340,180 +311,7 @@ export default function MainPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-block bg-primary/10 px-3 py-1 rounded-full text-primary text-sm font-medium mb-4">
-              Testimonials
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              What Our Users Say
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-              HealthConnect is trusted by thousands of patients and healthcare providers across the country
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Testimonial 1 - Patient */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 relative">
-              <div className="absolute -top-4 left-8">
-                <div className="inline-flex h-8 w-8 rounded-full bg-primary text-white items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="h-16 flex items-center">
-                <div className="text-yellow-400 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-              <blockquote className="mt-4">
-                <p className="text-gray-600 dark:text-gray-300 text-lg font-medium italic">
-                  "HealthConnect has made it so much easier to manage my healthcare needs. I can book appointments and access my records whenever I need to."
-                </p>
-              </blockquote>
-              <div className="mt-8 flex items-center">
-                <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  <Image 
-                    src="https://randomuser.me/api/portraits/women/33.jpg" 
-                    alt="Sarah Johnson" 
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900 dark:text-white">
-                    Sarah Johnson
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Patient
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 2 - Doctor */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 relative">
-              <div className="absolute -top-4 left-8">
-                <div className="inline-flex h-8 w-8 rounded-full bg-primary text-white items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="h-16 flex items-center">
-                <div className="text-yellow-400 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-              <blockquote className="mt-4">
-                <p className="text-gray-600 dark:text-gray-300 text-lg font-medium italic">
-                  "As a healthcare provider, this platform has streamlined my practice and helped me connect with patients more efficiently."
-                </p>
-              </blockquote>
-              <div className="mt-8 flex items-center">
-                <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  <Image 
-                    src="https://randomuser.me/api/portraits/men/56.jpg" 
-                    alt="Dr. Michael Chen" 
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900 dark:text-white">
-                    Dr. Michael Chen
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Cardiologist
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 3 - Patient */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 relative">
-              <div className="absolute -top-4 left-8">
-                <div className="inline-flex h-8 w-8 rounded-full bg-primary text-white items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="h-16 flex items-center">
-                <div className="text-yellow-400 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-              <blockquote className="mt-4">
-                <p className="text-gray-600 dark:text-gray-300 text-lg font-medium italic">
-                  "The appointment reminders have been a lifesaver. I never miss a check-up or medication refill now."
-                </p>
-              </blockquote>
-              <div className="mt-8 flex items-center">
-                <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  <Image 
-                    src="https://randomuser.me/api/portraits/men/42.jpg" 
-                    alt="Robert Thompson" 
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900 dark:text-white">
-                    Robert Thompson
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Patient
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-12 bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">10k+</div>
-              <p className="text-primary-foreground">Patients</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">1.5k+</div>
-              <p className="text-primary-foreground">Doctors</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">250+</div>
-              <p className="text-primary-foreground">Healthcare Facilities</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">98%</div>
-              <p className="text-primary-foreground">Satisfaction Rate</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-primary to-primary/80">
