@@ -17,7 +17,9 @@ export default function Register() {
     firstName: '',
     lastName: '',
     role: 'patient', // Default role
-    department: '', // New field for doctor's department
+    department: '', // Field for doctor's department
+    location: '',   // New field for admin's location
+    pincode: '',    // New field for admin's pincode
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -94,6 +96,18 @@ export default function Register() {
       newErrors.department = 'Please select a department';
     }
     
+    // Validate location and pincode if the role is admin
+    if (formData.role === 'admin') {
+      if (!formData.location.trim()) {
+        newErrors.location = 'Location is required';
+      }
+      if (!formData.pincode.trim()) {
+        newErrors.pincode = 'Pincode is required';
+      } else if (!/^\d{6}$/.test(formData.pincode)) {
+        newErrors.pincode = 'Pincode must be 6 digits';
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -116,6 +130,10 @@ export default function Register() {
         fullName: `${formData.firstName} ${formData.lastName}`,
         role: formData.role,
         ...(formData.role === 'doctor' && { department: formData.department }),
+        ...(formData.role === 'admin' && { 
+          location: formData.location,
+          pincode: formData.pincode 
+        }),
       };
       
       try {
@@ -239,7 +257,7 @@ export default function Register() {
             >
               <option value="patient">Patient</option>
               <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
+              <option value="admin">Hospital/Clinic</option>
             </select>
           </div>
           
@@ -268,6 +286,52 @@ export default function Register() {
               {errors.department && (
                 <p className="mt-1 text-sm text-red-600">{errors.department}</p>
               )}
+            </div>
+          )}
+          
+          {/* Location and Pincode for Hospital/Clinic admins */}
+          {formData.role === 'admin' && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                  Hospital/Clinic Location
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="Enter full address"
+                  className={`mt-1 block w-full border text-gray-900 ${
+                    errors.location ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                />
+                {errors.location && (
+                  <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor="pincode" className="block text-sm font-medium text-gray-700">
+                  Pincode
+                </label>
+                <input
+                  type="text"
+                  id="pincode"
+                  name="pincode"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  placeholder="6-digit pincode"
+                  maxLength={6}
+                  className={`mt-1 block w-full border text-gray-900 ${
+                    errors.pincode ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                />
+                {errors.pincode && (
+                  <p className="mt-1 text-sm text-red-600">{errors.pincode}</p>
+                )}
+              </div>
             </div>
           )}
           
