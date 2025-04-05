@@ -21,7 +21,7 @@ export default function MainPage() {
               <div className="flex flex-wrap gap-4">
                 <Link 
                   href="/register" 
-                  className="px-6 py-3 bg-primary text-white font-medium rounded-lg shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center"
+                  className="px-6 py-3 bg-primary text-white dark:text-black font-medium rounded-lg shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center"
                 >
                   Get Started
                   <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -330,7 +330,7 @@ export default function MainPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base dark:text-black font-medium rounded-md text-primary bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
               >
                 Create Your Account
                 <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
