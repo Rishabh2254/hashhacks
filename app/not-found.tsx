@@ -5,7 +5,7 @@ export default function NotFound() {
     <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12 text-center">
       <div className="mb-8">
         <img 
-          src="/next.svg" 
+          src="/download.png" 
           alt="Logo" 
           width={80}
           height={80}

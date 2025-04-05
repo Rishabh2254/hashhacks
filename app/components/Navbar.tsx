@@ -53,7 +53,7 @@ export default function Navbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center">
-                <Image src="/next.svg" alt="Logo" width={40} height={40} className="dark:invert" />
+                <Image src="/download.png" alt="Logo" width={40} height={40} className="dark:invert" />
                 <span className="ml-2 text-xl font-bold">HealthConnect</span>
               </Link>
             </div>

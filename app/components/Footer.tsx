@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
             <Link href="/" className="flex items-center">
-              <Image src="/next.svg" alt="Logo" width={40} height={40} className="dark:invert" />
+              <Image src="/download.png" alt="Logo" width={40} height={40} className="dark:invert" />
               <span className="ml-2 text-xl font-bold">HealthConnect</span>
             </Link>
             <p className="text-sm text-gray-500 dark:text-gray-400">

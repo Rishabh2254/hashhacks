@@ -40,7 +40,7 @@ export default function Hero() {
               width={600} 
               height={400} 
               className="rounded-lg shadow-lg"
-              onError={() => setImgSrc("/next.svg")}
+              onError={() => setImgSrc("/download.png")}
             />
           </div>
         </div>
