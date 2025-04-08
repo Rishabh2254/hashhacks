@@ -31,19 +31,6 @@ cd hashhacks.git
 
 3. Set Up Environment Variables
 
-
-NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyAcn2Kw1BUFRmd0E98zHYGnSe-BMHR_wEs",
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="hashhacks-16cd4.firebaseapp.com",
-NEXT_PUBLIC_FIREBASE_PROJECT_ID="hashhacks-16cd4",
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="hashhacks-16cd4.firebasestorage.app",
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="733989043363",
-NEXT_PUBLIC_FIREBASE_APP_ID="1:733989043363:web:59a8bd63a3293cf43d5316"
-
-API setup
-const API_KEY = "AIzaSyCkQTUtIgXPL77KWdxof1wo8KSINVOTYoQ";
-const API_URL = https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY};
-
-
 4. Run the application
 
       npm run dev
